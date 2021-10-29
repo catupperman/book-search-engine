@@ -33,7 +33,19 @@ const resolvers = {
 
             const token = signToken(user);
             return { token, user };
+        }, 
+        saveBook: async (parent, args, context) => {
+            if (context.user) {
+                const newUser = await User.findByIdAndUpdate(
+                    { _id: context.user._id},
+                    { $addToSet: { savedBooks: args.bookData} },
+                    { new: true, runValidators: true }
+                );
+                return newUser; 
+            }
+            throw new AuthenticationError("Please, Log In");
         }
+
 
     }
 }
